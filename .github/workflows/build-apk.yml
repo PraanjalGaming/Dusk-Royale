@@ -1,0 +1,47 @@
+name: Build Dusk Royale APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      - name: Create Android app and build APK
+        run: |
+          mkdir -p "$RUNNER_TEMP/dusk-wrapper"
+          cordova create "$RUNNER_TEMP/dusk-wrapper" com.praanjal.duskroyale "Dusk Royale"
+          rsync -a --exclude='.git' --exclude='.github' ./ "$RUNNER_TEMP/dusk-wrapper/www/"
+          cd "$RUNNER_TEMP/dusk-wrapper"
+          cordova platform add android
+          cordova build android
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dusk-Royale-APK
+          path: ${{ runner.temp }}/dusk-wrapper/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
