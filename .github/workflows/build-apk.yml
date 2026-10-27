@@ -42,4 +42,4 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Dusk-Royale 
+          name: Dusk-Royale
