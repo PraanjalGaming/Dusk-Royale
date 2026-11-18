@@ -648,7 +648,7 @@ const inS=e=>Math.hypot(e.x-G.x,e.z-G.z)<r;
 const _dz=dmg;dmg=function(e,...a){if(e&&e.x!==undefined&&inS(e))return;return _dz(e,...a)};
 const _fz=fire;fire=function(e,...a){if(e&&e.x!==undefined&&inS(e))return;return _fz(e,...a)};
 let was=false;const _uz=update;update=function(dt){_uz(dt);const k=performance.now()/1000;wall.material.opacity=.16+Math.sin(k*2)*.06;ring.material.opacity=.8+Math.sin(k*3)*.15;const p=ents[0],i=!!(state==='play'&&p&&inS(p));if(i!==was){was=i;toast(i?'Safe zone: no shooting or damage here':'Leaving safe zone')}}})()</script><script>(function(){const _dA=dmg;dmg=function(e,d,...a){if(e&&e.isP&&window.vArm)d*=.15;return _dA(e,d,...a)}})()</script><script>(function(){
-let gT=0,rT=0,rk=0;const kb=document.createElement('button');kb.className='btn';kb.textContent='ROCKET';kb.style.cssText='position:fixed;left:20px;top:30%;z-index:9;display:none';document.body.appendChild(kb);
+let gT=0,rT=0,rk=0;const kb=document.createElement('button');kb.className='btn';kb.id='rk';kb.textContent='ROCKET';kb.style.cssText='position:fixed;left:20px;top:30%;z-index:9;display:none';document.body.appendChild(kb);
 kb.onpointerdown=e=>{rk=1;e.preventDefault()};addEventListener('keydown',e=>{if(e.code==='KeyG')rk=1});
 addEventListener('contextmenu',e=>{if(window.vDrv&&window.vTy==='heli'){e.preventDefault();rk=1}});
 const co=matchMedia('(pointer:coarse)').matches,_uh=update;update=function(dt){_uh(dt);const v=window.vDv,on=!!(state==='play'&&v&&v.t==='heli'&&v.army);kb.style.display=(on&&co)?'block':'none';gT-=dt;rT-=dt;if(!on){rk=0;return}
@@ -692,9 +692,11 @@ const _ut=update;update=function(dt){_ut(dt);if(state!=='play')return;
   if(tg){const a=Math.atan2(tg.x-t.x,tg.z-t.z);t.hd.rotation.y=a;if(t.cd<=0){t.cd=.28;const b=bp.find(o=>!o.on);if(b){Object.assign(b,{on:1,x:t.x+Math.sin(a),z:t.z+Math.cos(a),vx:Math.sin(a)*50,vz:Math.cos(a)*50,life:.7,d:10,o:0});b.m.visible=true;b.m.rotation.y=a}}}}};
 const ALL=['smg','shotgun','rifle','gl','sniper','p90','banana','hunt','turret'];
 const CODES={STARTER:()=>{addCoins(100);return'Starter bonus: +100 coins!'},
+ DUSKROYALE:()=>{addCoins(300);return'Welcome to Dusk Royale: +300 coins!'},
+ HUNTER:()=>{const o=ownList();if(o.includes('hunt')){addCoins(200);return'You already own the Hunting Rifle: +200 coins instead!'}o.push('hunt');ownSave();if(state==='play')inv.hunt=Math.max(inv.hunt||0,Math.round(WP.hunt.ammo*1.5));return'Hunter reward: Hunting Rifle unlocked!'},
  GUN:()=>{const o=ownList(),lk=ALL.filter(k=>!o.includes(k));if(!lk.length){addCoins(200);return'All guns already unlocked: +200 coins instead!'}const k=lk[Math.random()*lk.length|0];o.push(k);ownSave();if(state==='play')inv[k]=Math.max(inv[k]||0,Math.round(WP[k].ammo*1.5));return'Unlocked: '+WP[k].n+'!'}};
 const used=()=>{try{return JSON.parse(localStorage.getItem('dr_codes')||'[]')}catch(e){return[]}};
-function redeem(raw){const c=(raw||'').trim().toUpperCase();if(!c)return'Enter a code';if(!CODES[c])return'Invalid code';const u=used();if(u.includes(c))return'Code already redeemed';u.push(c);try{localStorage.setItem('dr_codes',JSON.stringify(u))}catch(e){}return CODES[c]()}
+function redeem(raw){const c=(raw||'').replace(/\s+/g,'').toUpperCase();if(!c)return'Enter a code';if(!CODES[c])return'Invalid code';const u=used();if(u.includes(c))return'Code already redeemed';u.push(c);try{localStorage.setItem('dr_codes',JSON.stringify(u))}catch(e){}return CODES[c]()}
 const mm=document.getElementById('mm0'),bt=document.createElement('button');bt.className='mb';bt.textContent='REDEEM CODE';if(mm)mm.appendChild(bt);
 const md=document.createElement('div');md.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:30;display:none;background:rgba(15,10,25,.96);border:2px solid #ff5500;border-radius:16px;padding:16px;width:min(86vw,300px);text-align:center;color:#fff';
 md.innerHTML='<div style="font-size:20px;margin-bottom:10px">Redeem Code</div><input id="rci" maxlength="16" placeholder="Enter code" style="width:90%;padding:10px;font-size:18px;text-align:center;text-transform:uppercase;border-radius:8px;border:2px solid #ff5500;background:#000;color:#ffd23f"><div id="rcm" style="min-height:22px;margin:10px 0;font-size:14px"></div><div style="display:flex;gap:8px"><button class="btn" id="rcr" style="flex:1">REDEEM</button><button class="btn" id="rcx" style="flex:1">CLOSE</button></div>';document.body.appendChild(md);
@@ -792,7 +794,7 @@ const g=new THREE.Mesh(new THREE.SphereGeometry(.28,16,12),MS('#ffd23f',{emissiv
 const _ue=update;update=function(dt){_ue(dt);if(got)return;const t=performance.now()/1000;g.position.y=.55+Math.sin(t*2)*.08;g.rotation.y=t*1.5;const p=ents[0];
  if(state==='play'&&p&&p.alive&&Math.hypot(p.x-x,p.z-z)<1.6){got=true;S.remove(g);try{localStorage.setItem('dr_egg','1')}catch(e){}addCoins(500);const sv=document.getElementById('sv');
   if(sv){sv.textContent='';const b=document.createElement('b'),sp=document.createElement('span');b.textContent='EASTER EGG FOUND!';sp.textContent='You found the Golden Egg: +500 coins';sv.append(b,sp);sv.style.animation='none';void sv.offsetWidth;sv.style.animation='';sv.style.display='block';setTimeout(()=>{sv.style.display='none'},2600)}else toast('Golden Egg found!')}}})()</script><script>(function(){
-const CHILDRENS=true;if(!CHILDRENS)return;
+const CHILDRENS=false;if(!CHILDRENS)return;
 const st=document.createElement('style');st.textContent='.cd{font:800 clamp(16px,3.6vw,28px) Arial,sans-serif;color:#fff;letter-spacing:2px;margin:-6px 0 14px;text-shadow:0 0 12px #ff3d81,0 2px 0 #6b0030;animation:cdg 1.6s ease-in-out infinite alternate}@keyframes cdg{from{opacity:.8;transform:scale(1)}to{opacity:1;transform:scale(1.05)}}.bl{position:absolute;bottom:-70px;pointer-events:none;animation:blr linear infinite}@keyframes blr{to{transform:translateY(-115vh) rotate(8deg)}}';document.head.appendChild(st);
 const mm=document.getElementById('mm0'),h1=mm&&mm.querySelector('h1');
 if(h1){h1.insertAdjacentHTML('afterend','<div class="cd">\u{1F388} Happy Children\'s Day! \u{1F388}</div>');mm.style.overflow='hidden';for(let i=0;i<9;i++){const b=document.createElement('span');b.className='bl';b.textContent='\u{1F388}';b.style.cssText='left:'+(8+i*10+Math.random()*4)+'%;font-size:'+(26+Math.random()*22|0)+'px;animation-duration:'+(9+Math.random()*7)+'s;animation-delay:-'+(Math.random()*12)+'s';mm.appendChild(b)}}
@@ -804,4 +806,46 @@ const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32
 const FP=[],FC=[];for(let k=-7;k<=6;k++){const c=9+18*k;for(let t=-112;t<=112;t+=1.4){const y=6.6-.7*Math.sin(Math.PI*(((t+112)%18)/18)),col=CL[Math.floor((t+112)/1.4)%7];FP.push(c,y,t,t,y,c);FC.push(col.r,col.g,col.b,col.r,col.g,col.b)}}
 const fg=new THREE.BufferGeometry();fg.setAttribute('position',new THREE.Float32BufferAttribute(FP,3));fg.setAttribute('color',new THREE.Float32BufferAttribute(FC,3));const fl=new THREE.Points(fg,new THREE.PointsMaterial({size:.9,vertexColors:true,transparent:true,opacity:.95,depthWrite:false}));fl.frustumCulled=false;S.add(fl);
 let gift=0;const _uc=update;update=function(dt){_uc(dt);const t=performance.now()/1000;for(let i=0;i<N;i++){const b=bp0[i];dm.position.set(b[0],b[1]+Math.sin(t*1.2+b[3])*.12,b[2]);dm.scale.set(1,1.25,1);dm.updateMatrix();im.setMatrixAt(i,dm.matrix)}im.instanceMatrix.needsUpdate=true;
- if(!gift&&state==='play'){gift=1;try{if(localStorage.getItem('dr_cd')!=='1'){localStorage.setItem('dr_cd','1');addCoins(100);toast("Happy Children's Day! +100 coins")}}catch(e){}}}})()</script></body></html>
+ if(!gift&&state==='play'){gift=1;try{if(localStorage.getItem('dr_cd')!=='1'){localStorage.setItem('dr_cd','1');addCoins(100);toast("Happy Children's Day! +100 coins")}}catch(e){}}}})()</script><script>(function(){
+const st=document.createElement('style');st.textContent='#mm0 .mb{padding:8px 24px;margin:5px 0;font-size:clamp(16px,3.6vw,26px)}';document.head.appendChild(st);
+const GK=['pistol','smg','shotgun','rifle','gl','sniper','p90','banana','hunt','turret'],SK={},TX={};try{Object.assign(SK,JSON.parse(localStorage.getItem('dr_gskin')||'{}'))}catch(e){}
+const NEW={p90:['smg',.9,'#ff9f1c'],banana:['pistol',1.1,'#ffe135'],hunt:['rifle',1.05,null],turret:['pistol',1.5,'#6b7280']};
+function newGuns(u){const par=u.guns&&u.guns.pistol&&u.guns.pistol.parent;if(!par)return;for(const k in NEW){if(u.guns[k])continue;const a=NEW[k],m=buildGun(a[0]);m.scale.setScalar(a[1]);if(a[2])m.traverse(q=>{if(q.isMesh){q.material=q.material.clone();if(k==='banana'||q.material.color.getHex()===GMt.color.getHex())q.material.color.set(a[2])}});m.visible=false;par.add(m);u.guns[k]=m}}
+function tex(k,cb){if(TX[k])return cb(TX[k]);const im=new Image();im.onload=()=>{const t=new THREE.Texture(im);t.needsUpdate=true;TX[k]=t;cb(t)};im.src=SK[k]}
+function skinGun(g,k){const m=g.userData.guns&&g.userData.guns[k];if(!m||!SK[k])return;tex(k,t=>m.traverse(q=>{if(q.isMesh)q.material=new THREE.MeshStandardMaterial({map:t,roughness:.6,metalness:.2})}))}
+const _mp=model;model=function(o,name){const g=_mp(o,name);try{newGuns(g.userData);if(o===me||name===(me.name||'You'))for(const k in SK)skinGun(g,k)}catch(e){console.error('plugin',e)}return g};
+const mm=document.getElementById('mm0'),bt=document.createElement('button');bt.className='mb';bt.textContent='PLUGIN';if(mm)mm.appendChild(bt);
+const md=document.createElement('div');md.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:30;display:none;background:rgba(15,10,25,.96);border:2px solid #ff5500;border-radius:16px;padding:16px;width:min(90vw,340px);color:#fff;text-align:center;max-height:90vh;overflow:auto';
+md.innerHTML='<div style="font-size:20px;margin-bottom:8px">Plugins</div><div style="font-size:15px;margin-bottom:6px;color:#ffd23f">Gun Skin</div><select id="pgw" style="width:100%;padding:8px;font-size:16px"></select><input id="pgf" type="file" accept="image/*" style="width:100%;margin:10px 0;font-size:14px"><img id="pgp" style="display:none;width:96px;height:96px;object-fit:cover;border-radius:8px;border:2px solid #ff5500"><div id="pgm" style="min-height:20px;margin:8px 0;font-size:14px"></div><div style="display:flex;gap:6px"><button class="btn" id="pga" style="flex:1">APPLY</button><button class="btn" id="pgr" style="flex:1">RESET</button><button class="btn" id="pgx" style="flex:1">CLOSE</button></div>';document.body.appendChild(md);
+const sel=md.querySelector('#pgw'),fi=md.querySelector('#pgf'),pv=md.querySelector('#pgp'),ms=md.querySelector('#pgm');
+GK.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=WP[k].n;sel.appendChild(o)});
+['keydown','keyup'].forEach(ev=>md.addEventListener(ev,e=>e.stopPropagation()));
+const save=()=>{try{localStorage.setItem('dr_gskin',JSON.stringify(SK))}catch(e){ms.textContent='Storage full, skin not saved'}};
+fi.onchange=()=>{const f=fi.files[0];if(f){pv.src=URL.createObjectURL(f);pv.style.display='inline-block'}};
+function pick(f,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d'),s=Math.min(im.width,im.height);x.drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,256,256);cb(c.toDataURL('image/jpeg',.85))};im.onerror=()=>cb(null);im.src=r.result};r.onerror=()=>cb(null);r.readAsDataURL(f)}
+md.querySelector('#pga').onclick=()=>{const f=fi.files[0],k=sel.value;if(!f){ms.textContent='Choose an image first';return}pick(f,u=>{if(!u){ms.textContent='Could not read that image';return}SK[k]=u;delete TX[k];save();rebuildMe();ms.textContent='Skin applied to '+WP[k].n})};
+md.querySelector('#pgr').onclick=()=>{const k=sel.value;delete SK[k];delete TX[k];save();rebuildMe();ms.textContent='Skin removed from '+WP[k].n};
+md.querySelector('#pgx').onclick=()=>{md.style.display='none'};bt.onclick=()=>{ms.textContent='';md.style.display='block'}})()</script><script>(function(){
+const st=document.createElement('style');st.textContent=`@media (pointer:coarse){
+body:not(.drv) #vb{right:112px!important;bottom:104px!important;top:auto!important}
+body.drv #roll,body.drv #swap{display:none!important}
+body.drv:not(.drh) #fire{display:none!important}
+body.drv #fire{right:190px!important;bottom:22px!important}
+body.drv #dl{left:16px!important;bottom:22px!important;top:auto!important}
+body.drv #dr2{left:92px!important;bottom:22px!important;top:auto!important}
+body.drv #dg{right:22px!important;bottom:22px!important;top:auto!important}
+body.drv #db{right:104px!important;bottom:22px!important;top:auto!important}
+body.drv #vb{right:22px!important;bottom:98px!important;top:auto!important}
+body.drv #vu{left:16px!important;bottom:98px!important;top:auto!important;right:auto!important}
+body.drv #vd{left:92px!important;bottom:98px!important;top:auto!important;right:auto!important}
+body.drv #rk{right:104px!important;bottom:98px!important;left:auto!important;top:auto!important}}`;document.head.appendChild(st);
+const _ul=update;update=function(dt){_ul(dt);const v=window.vDv,d=!!(window.vDrv&&v&&state==='play');document.body.classList.toggle('drv',d);document.body.classList.toggle('drh',!!(d&&v.t==='heli'&&v.army))}})()</script><script>(function(){
+const st=document.createElement('style');st.textContent='#mm0{justify-content:flex-start!important;overflow-y:auto!important;overflow-x:hidden!important;padding-top:12px!important;padding-bottom:16px!important;box-sizing:border-box;-webkit-overflow-scrolling:touch;touch-action:pan-y}#mm0>h1{margin-top:auto!important}#mm0>.mb:last-of-type{margin-bottom:auto!important}';document.head.appendChild(st);
+const mm=document.getElementById('mm0');if(!mm)return;mm.style.overflow='';
+const bl=mm.querySelectorAll('.bl');if(bl.length){const w=document.createElement('div');w.style.cssText='position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0';bl.forEach(b=>w.appendChild(b));mm.prepend(w)}})()</script><script>(function(){
+const R=matchMedia('(pointer:coarse)').matches?75:100,R2=R*R;let t=0;
+const _ur=update;update=function(dt){_ur(dt);if(S.fog){S.fog.near=R*.45;S.fog.far=R*.95}
+ t-=dt;if(t>0)return;t=.25;const p=ents[0];if(!p)return;
+ S.children.forEach(m=>{if(m.isLight||m.isCamera)return;const g=m.geometry&&m.geometry.parameters;if(g&&(g.radius>=150||g.width>=300||g.height>=300))return;
+  const dx=m.position.x-p.x,dz=m.position.z-p.z,far=dx*dx+dz*dz>R2;
+  if(far){if(m.visible){m.visible=false;m._ch=1}}else if(m._ch){m.visible=true;m._ch=0}})}})()</script></body></html>
